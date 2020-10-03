@@ -7,6 +7,7 @@ use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class Video extends Model implements HasMedia
 {
@@ -39,7 +40,7 @@ class Video extends Model implements HasMedia
     /**
      * @return void
      */
-    public function registerMediaConversions(): void
+    public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
               ->width(368)

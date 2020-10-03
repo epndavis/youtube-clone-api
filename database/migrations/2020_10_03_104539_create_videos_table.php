@@ -15,6 +15,7 @@ class CreateVideosTable extends Migration
     {
         Schema::create('videos', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
             $table->string('title');
             $table->text('description');
             $table->foreignId('channel_id')->constrained();

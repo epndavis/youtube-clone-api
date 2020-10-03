@@ -15,4 +15,11 @@ class Channel extends Model
     public function user() {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function videos() {
+        return $this->hasMany(Video::class);
+    }
 }
