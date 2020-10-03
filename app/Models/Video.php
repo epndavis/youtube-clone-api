@@ -13,6 +13,11 @@ class Video extends Model implements HasMedia
 {
     use HasFactory, InteractsWithMedia;
 
+    protected $with = [
+        'channel', 
+        'media'
+    ];
+
     protected static function boot()
     {
         parent::boot();
