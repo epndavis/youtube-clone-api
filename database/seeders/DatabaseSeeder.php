@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
         foreach ($users as $user) {
             foreach ($user->channels as $channel) {
                 foreach ($channel->videos as $video) {
-                    $path = Factory::create()->file(base_path('/tmp/videos'), base_path('/tmp'));
+                    $path = Factory::create()->file(base_path('/tmp/videos'), base_path('/tmp/videos/tmp'));
                     
                     $video->addMedia($path)
                         ->toMediaCollection('video');
