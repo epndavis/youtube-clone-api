@@ -40,4 +40,18 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * @return Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function activeChannel() {
+        return $this->belongsTo(Channel::class, 'active_channel');
+    }
+
+    /**
+     * @return Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function channels() {
+        return $this->hasMany(Channel::class);
+    }
 }
