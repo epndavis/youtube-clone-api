@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Services\VideoService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class VideoResource extends JsonResource
@@ -24,10 +25,11 @@ class VideoResource extends JsonResource
             'view_count' => number_format($viewCount),
             'uploaded_when' => $this->created_at->diffForHumans(),
             'thumb' => $video->getFullUrl('thumb'),
-            'gif' => '',
-            'duration' => '28',
+            'gif' => (new VideoService)->getGifUrl($video),
+            'duration' => $video->getCustomProperty('info')['duration'],
             'channel' => [
                 'name' => $this->channel->name,
+                'verified' => $this->channel->verified,
             ],
         ];
     }

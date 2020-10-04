@@ -29,16 +29,18 @@ class SingleVideoResource extends JsonResource
                 'uploaded_when' => $this->created_at->diffForHumans(),
                 'src' => $video->getFullUrl(),
                 'thumb' => $video->getFullUrl('thumb'),
-                'gif' => '',
-                'duration' => '28',
+                'duration' => $video->getCustomProperty('info')['duration'],
                 'channel' => [
                     'name' => $this->channel->name,
+                    'verified' => $this->channel->verified,
                 ],
             ],
 
             'related' => VideoResource::collection(
                 Video::has('media')
                     ->where('uuid', '!=', $this->uuid)
+                    ->inRandomOrder()
+                    ->limit(20)
                     ->get()
             ),
         ];

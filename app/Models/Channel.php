@@ -10,6 +10,13 @@ class Channel extends Model
     use HasFactory;
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'verified' => 'boolean',
+    ];
+
+    /**
      * @return Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function user() {
