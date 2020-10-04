@@ -24,7 +24,7 @@ class ChannelFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->name,
-            'verified' => $this->faker->boolean(40),
+            'verified' => $this->faker->boolean(50),
         ];
     }
 }

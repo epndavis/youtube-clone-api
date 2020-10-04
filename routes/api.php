@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/videos')->name('videos')->group(function() {
     Route::get('/', [VideoController::class, 'index'])->name('index');
+    Route::post('/', [VideoController::class, 'store'])->name('store');
     Route::get('/{video}', [VideoController::class, 'show'])->name('show');
 });
 

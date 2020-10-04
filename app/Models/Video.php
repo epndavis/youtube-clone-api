@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Support\Str;
+use App\Services\VideoService;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -48,8 +49,8 @@ class Video extends Model implements HasMedia
     public function registerMediaConversions(Media $media = null): void
     {
         $this->addMediaConversion('thumb')
-              ->width(368)
-              ->height(232)
+              ->width(VideoService::THUMB_WIDTH)
+              ->height(VideoService::THUMB_HEIGHT)
               ->extractVideoFrameAtSecond(1);
     }
 
