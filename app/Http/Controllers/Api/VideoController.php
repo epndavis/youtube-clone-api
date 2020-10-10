@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Video;
 use App\Models\Channel;
+use Illuminate\Http\Request;
 use App\Services\VideoService;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoResource;
@@ -14,12 +15,19 @@ class VideoController extends Controller {
     
     /**
      * Display a listing of the resource.
+     * @param Request $request
      *
      * @return VideoResource
      */
-    public function index() {
+    public function index(Request $request) {
+        $query = Video::has('media');
+
+        if ($request->has('q')) {
+            $query->where('title', 'LIKE', '%' . $request->input('q') . '%');
+        }
+
         return VideoResource::collection(
-            Video::has('media')->get()
+            $query->get()
         );
     }
 

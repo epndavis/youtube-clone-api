@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Str;
 use App\Services\VideoService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -21,6 +22,7 @@ class VideoResource extends JsonResource
         return [
             'id' => $this->uuid,
             'title' => $this->title,
+            'description_short' => Str::limit($this->description, 150),
             'view_count_shorthand' => $this->shortViewCount($viewCount),
             'view_count' => number_format($viewCount),
             'uploaded_when' => $this->created_at->diffForHumans(),
