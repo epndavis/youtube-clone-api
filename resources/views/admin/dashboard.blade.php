@@ -8,6 +8,10 @@
         <h1 class="text-2xl">
             Dashboard
         </h1>
+
+        <div>
+            <upload/>
+        </div>
     </div>
 </div>
 @endsection
