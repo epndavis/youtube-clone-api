@@ -30,7 +30,7 @@ class VideoService
 
         $media = $video->addMedia($filePath)
             ->usingName($name)
-            ->usingFileName($name . '.' . pathinfo($filePath)['extension'])
+            ->usingFileName($name . '.' . pathinfo($filePath)['extension'] ?? 'mp4')
             ->withCustomProperties([
                 'info' => [
                     'duration' => $duration,
