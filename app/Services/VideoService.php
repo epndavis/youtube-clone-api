@@ -8,6 +8,7 @@ use App\Models\Video;
 use Illuminate\Support\Str;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Coordinate\Dimension;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Spatie\MediaLibrary\MediaCollections\Filesystem;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -28,9 +29,15 @@ class VideoService
         $duration = $videoFile->get('duration');
         $name = Str::uuid();
 
+        if ($filePath instanceof UploadedFile) {
+            $extension = $filePath->getClientOriginalExtension();
+        } else {
+            $extension = pathinfo($filePath)['extension'];
+        }
+
         $media = $video->addMedia($filePath)
             ->usingName($name)
-            ->usingFileName($name . '.' . pathinfo($filePath)['extension'] ?? 'mp4')
+            ->usingFileName($name . '.' . $extension)
             ->withCustomProperties([
                 'info' => [
                     'duration' => $duration,
