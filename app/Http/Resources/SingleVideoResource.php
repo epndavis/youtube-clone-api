@@ -3,11 +3,24 @@
 namespace App\Http\Resources;
 
 use App\Models\Video;
+use App\Services\VideoService;
 use App\Http\Resources\VideoResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class SingleVideoResource extends JsonResource
 {
+    protected VideoService $service;
+
+    /**
+     * @param mixed $resource
+     */
+    public function __construct($resource)
+    {
+        parent::__construct($resource);
+
+        $this->service = app(VideoService::class);
+    }
+    
     /**
      * Transform the resource into an array.
      *
@@ -27,8 +40,8 @@ class SingleVideoResource extends JsonResource
                 'view_count_shorthand' => $this->shortViewCount($viewCount),
                 'view_count' => number_format($viewCount),
                 'uploaded_when' => $this->created_at->diffForHumans(),
-                'src' => $video->getFullUrl(),
-                'thumb' => $video->getFullUrl('thumb'),
+                'src' => $this->service->getUrl($video),
+                'thumb' => $this->service->getUrl($video, 'thumb'),
                 'duration' => $video->getCustomProperty('info')['duration'],
                 'channel' => [
                     'name' => $this->channel->name,

@@ -26,16 +26,42 @@ class VideoService
             ->first(); 
 
         $duration = $videoFile->get('duration');
+        $name = Str::uuid();
 
         $media = $video->addMedia($filePath)
+            ->usingName($name)
+            ->usingFileName($name . '.' . pathinfo($filePath)['extension'])
             ->withCustomProperties([
                 'info' => [
                     'duration' => $duration,
-                ],
+                ]
             ])
             ->toMediaCollection('video');
 
         $this->generateGif($media);
+    }
+
+    /**
+     * @param Media $media
+     * @param string $type
+     * 
+     * @return string
+     */
+    public function getUrl(Media $media, $type = '')
+    {
+        if ($media->disk === 's3') {
+            if ($type === 'gif') {
+                return Storage::disk($media->disk)->temporaryUrl($this->gifPath($media), now()->addMinutes(10));
+            }
+
+            return $media->getTemporaryUrl(now()->addMinutes(10), $type);
+        }
+
+        if ($type === 'gif') {
+            return Storage::disk($media->disk)->url($this->gifPath($media));
+        }
+
+        return $media->getUrl($type);
     }
 
     /**
@@ -48,36 +74,16 @@ class VideoService
     public function generateGif(Media $media, $seconds = 0, $duration = 3)
     {
         $ffmpeg = $this->getFFMpeg();
-        $file = $ffmpeg->open($media->getPath());
-
-        $path = $this->getGifPath($media);
+        $file = $ffmpeg->open($this->getUrl($media));
 
         $gif = $file->gif(TimeCode::fromSeconds($seconds), (new Dimension(static::THUMB_WIDTH, static::THUMB_HEIGHT)), $duration);
-        $gif->save($path);
+        $gif->save(storage_path('app/temp/' . Str::slug($media->name) . '-gif.gif'));
 
-        return $path;
-    }
+        Storage::disk($media->disk)->put($this->gifPath($media), Storage::get('temp/' . Str::slug($media->name) . '-gif.gif'));
+        Storage::delete('temp/' . Str::slug($media->name) . '-gif.gif');
 
-    /**
-     * @param Media $media
-     * 
-     * @return string
-     */
-    public function getGifUrl(Media $media)
-    {
-        return Storage::disk(config('media-library.disk_name'))
-            ->url($this->gifPath($media));
-    }
-
-    /**
-     * @param Media $media
-     * 
-     * @return string
-     */
-    public function getGifPath(Media $media)
-    {
-        return Storage::disk(config('media-library.disk_name'))
-            ->path($this->gifPath($media));
+        $media->setCustomProperty('gif_generated', true);
+        $media->save();
     }
 
     /**
