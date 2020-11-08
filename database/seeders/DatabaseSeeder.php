@@ -21,17 +21,25 @@ class DatabaseSeeder extends Seeder
         $users = User::factory(3)
             ->has(
                 Channel::factory()
-                    ->has(Video::factory()->count(3))
             )
             ->create();
 
         foreach ($users as $user) {
             foreach ($user->channels as $channel) {
-                foreach ($channel->videos as $video) {
-                    $path = Factory::create()->file(base_path('/tmp/videos'), base_path('/tmp/videos/tmp'));
-
-                    app(VideoService::class)->addMedia($video, $path);
-                }
+                Video::factory()
+                    ->count(3)
+                    ->afterCreating(function ($video) {
+                        app(VideoService::class)->addMedia(
+                            $video, 
+                            Factory::create()->file(
+                                base_path('/tmp/videos'), 
+                                base_path('/tmp/videos/tmp')
+                            )
+                        );
+                    })
+                    ->create([
+                        'channel_id' => $channel->id,
+                    ]);
             }
         }
     }

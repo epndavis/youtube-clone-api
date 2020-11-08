@@ -21,12 +21,14 @@ class VideoService
 
     public function addMedia(Video $video, $filePath)
     {
-        $videoFile = $this->getFFProbe()
-            ->streams($filePath)
-            ->videos()                   
-            ->first(); 
+        // $videoFile = $this->getFFProbe()
+        //     ->streams($filePath)
+        //     ->videos()                   
+        //     ->first(); 
 
-        $duration = $videoFile->get('duration');
+        $duration = $this->getFFProbe()->format($filePath)->get('duration');
+
+        //$duration = $videoFile->get('duration');
         $name = Str::uuid();
 
         if ($filePath instanceof UploadedFile) {

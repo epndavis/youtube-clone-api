@@ -25,6 +25,9 @@ class ChannelFactory extends Factory
         return [
             'name' => $this->faker->unique()->name,
             'verified' => $this->faker->boolean(50),
+            'user_id' => function () {
+                return User::factory()->create()->id;
+            }
         ];
     }
 }
