@@ -18,29 +18,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $users = User::factory(3)
+        User::factory(3)
             ->has(
-                Channel::factory()
+                Channel::factory()->afterCreating(function ($channel) {
+                    Video::factory()
+                        ->count(3)
+                        ->afterCreating(function ($video) {
+                            app(VideoService::class)->addMedia(
+                                $video, 
+                                Factory::create()->file(
+                                    base_path('/tmp/videos'), 
+                                    base_path('/tmp/videos/tmp')
+                                )
+                            );
+                        })
+                        ->create([
+                            'channel_id' => $channel->id,
+                        ]);
+                })
             )
             ->create();
-
-        foreach ($users as $user) {
-            foreach ($user->channels as $channel) {
-                Video::factory()
-                    ->count(3)
-                    ->afterCreating(function ($video) {
-                        app(VideoService::class)->addMedia(
-                            $video, 
-                            Factory::create()->file(
-                                base_path('/tmp/videos'), 
-                                base_path('/tmp/videos/tmp')
-                            )
-                        );
-                    })
-                    ->create([
-                        'channel_id' => $channel->id,
-                    ]);
-            }
-        }
     }
 }
