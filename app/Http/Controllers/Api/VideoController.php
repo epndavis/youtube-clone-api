@@ -27,7 +27,7 @@ class VideoController extends Controller {
         }
 
         return VideoResource::collection(
-            $query->get()
+            $query->orderBy('created_at', 'DESC')->get()
         );
     }
 
