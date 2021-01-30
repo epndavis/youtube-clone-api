@@ -41,8 +41,6 @@ class VideoService
             ->toMediaCollection('video');
 
         $this->generateGif($media);
-
-        $this->generateQuality($media);
     }
 
     /**
