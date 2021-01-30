@@ -41,6 +41,8 @@ class VideoService
             ->toMediaCollection('video');
 
         $this->generateGif($media);
+
+        $this->generateQuality($media);
     }
 
     /**
@@ -86,6 +88,28 @@ class VideoService
 
         $media->setCustomProperty('gif_generated', true);
         $media->save();
+    }
+
+    public function generateQuality(Media $media)
+    {
+        $ffmpeg = $this->getFFMpeg();
+        $file = $ffmpeg->open($this->getUrl($media));
+
+        // $file
+        //     ->filters()
+        //     ->resize(new \FFMpeg\Coordinate\Dimension(1200, 720))
+        //     ->synchronize();
+        
+        // $file
+        //     ->frame(\FFMpeg\Coordinate\TimeCode::fromSeconds(10))
+        //     ->save('frame.jpg');
+        $format = new \FFMpeg\Format\Video\X264('copy');
+        $format->setKiloBitrate(2000);
+
+        $file->save($format, storage_path('app/temp/' . Str::slug($media->name) . '.mp4'));
+
+        Storage::disk($media->disk)->put(app(Filesystem::class)->getMediaDirectory($media) . Str::slug($media->name) . '.mp4', Storage::get('temp/' . Str::slug($media->name) . '.mp4'));
+        Storage::delete('temp/' . Str::slug($media->name) . '.mp4');
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\Channel;
 use Tests\TestCase;
 use App\Models\Video;
 
@@ -49,5 +50,10 @@ class VideoApiTest extends TestCase
                     'related',
                 ],
             ]);
+    }
+
+    public function an_authenticated_user_can_post_a_video()
+    {
+        $channel = Channel::factory()->create();
     }
 }

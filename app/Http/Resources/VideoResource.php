@@ -33,6 +33,7 @@ class VideoResource extends JsonResource
 
         return [
             'id' => $this->uuid,
+            'order' => $this->id,
             'title' => $this->title,
             'description_short' => Str::limit($this->description, 150),
             'view_count_shorthand' => $this->shortViewCount($viewCount),

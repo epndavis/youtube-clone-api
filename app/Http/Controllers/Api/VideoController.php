@@ -10,6 +10,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\VideoResource;
 use App\Http\Requests\StoreVideoRequest;
 use App\Http\Resources\SingleVideoResource;
+use Jenssegers\Agent\Facades\Agent;
 
 class VideoController extends Controller {
     
@@ -26,8 +27,14 @@ class VideoController extends Controller {
             $query->where('title', 'LIKE', '%' . $request->input('q') . '%');
         }
 
+        $query->when($request->input('id'), function ($q, $id) { 
+            return $q->where('id', '<', $id);
+        });
+
         return VideoResource::collection(
-            $query->orderBy('created_at', 'DESC')->get()
+            $query->limit(Agent::isMobile() ? 10 : 20)
+                ->orderBy('id', 'DESC')
+                ->get()
         );
     }
 
